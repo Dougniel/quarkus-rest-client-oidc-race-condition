@@ -12,14 +12,14 @@ import jakarta.ws.rs.Path;
 public class GreetingResource {
 
     @RestClient
-    SecuredRestClient restClient;
+    SecuredRestClient client;
 
     @GET
     @Path("hello")
     public Uni<String> hello() {
+        // simulate internal concurrent calls
         return Uni.join()
-                .all(IntStream.range(0, 10).mapToObj(i -> restClient.callSecuredEndpoint()).toList())
-                .andFailFast()
-                .map(l -> "Hello " + l.size() + " times");
+                .all(IntStream.range(0, 4).mapToObj(i -> client.callSecuredEndpoint()).toList())
+                .andFailFast().map(l -> "Hello " + l.size() + " times");
     }
 }
