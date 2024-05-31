@@ -1,7 +1,17 @@
 package org.acme;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static io.restassured.RestAssured.post;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.unauthorized;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import java.io.IOException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -38,6 +48,13 @@ public class WireMockResource implements QuarkusTestResourceLifecycleManager {
 
         wireMockServer = new WireMockServer(wireMockConfig().port(port));
         wireMockServer.start();
+
+        wireMockServer.stubFor(post("/oauth2/token")
+                .withBasicAuth("client-id", "client-secret")
+                .withFormParam("grant_type", equalTo("client_credentials"))
+                .willReturn(null)
+                .willReturn(ok("{\"token_type\":\"Bearer\",\"expires_in\":1,\"access_token\":\"TOKEN-0\"}")
+                        .withFixedDelay(50)));
 
         var props = Map.of("service.url", wireMockServer.baseUrl());
 

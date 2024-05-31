@@ -1,14 +1,14 @@
 package org.acme;
 
+import org.acme.runtime.PatchedOidcClientRequestReactiveFilter;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-import io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 
-@RegisterProvider(OidcClientRequestReactiveFilter.class)
+@RegisterProvider(PatchedOidcClientRequestReactiveFilter.class)
 @RegisterRestClient(configKey = "secured")
 public interface SecuredRestClient {
     @GET

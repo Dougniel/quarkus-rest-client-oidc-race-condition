@@ -13,6 +13,7 @@ import static org.hamcrest.CoreMatchers.is;
 import java.util.stream.IntStream;
 
 import org.acme.WireMockResource.WiremockInject;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -23,12 +24,13 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 @QuarkusTestResource(WireMockResource.class)
 class GreetingResourceTest {
-
     @WiremockInject
     WireMockServer wiremock;
 
     @Test
     void test() throws InterruptedException {
+        wiremock.resetRequests(); // reset counters
+
         // mock authentification (Oauth2)
         wiremock.stubFor(post("/oauth2/token")
                 .withBasicAuth("client-id", "client-secret")
